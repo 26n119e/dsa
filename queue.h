@@ -61,4 +61,5 @@ void queue_enqueue(int x, queue q)
                 q->array[q->rear] = x;
         }
 }
+
 #endif
