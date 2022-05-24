@@ -1,33 +1,31 @@
-#include <stdio.h>
-#include <stdlib.h>
+#ifndef _SL_H
+#define _SL_H
 
-#ifndef _SKIP_LIST_H
-#define _SKIP_LIST_H
-struct skip_list_node;
-typedef struct skip_list_node *skip_list;
-typedef struct skip_list_node *skip_list_position;
+struct sl_node;
+typedef struct sl_node *skip_list;
+typedef struct sl_node *sl_position;
 
-struct skip_list_node
+struct sl_node
 {
         int element;
         skip_list right;
         skip_list down;
 };
 
-static skip_list_position BOTTOM = NULL;
-static skip_list_position TAIL = NULL;
+static sl_position BOTTOM = NULL;
+static sl_position TAIL = NULL;
 
-skip_list skip_list_initialize(void);
-skip_list_position skip_list_find(int item, skip_list l);
-skip_list skip_list_insert(int item, skip_list l);
+skip_list sl_initialize(void);
+sl_position sl_find(int item, skip_list l);
+skip_list sl_insert(int item, skip_list l);
 
-skip_list skip_list_initialize(void)
+skip_list sl_initialize(void)
 {
         skip_list l;
 
         if (BOTTOM == NULL)
         {
-                BOTTOM = (struct skip_list_node *)malloc(sizeof(struct skip_list_node));
+                BOTTOM = (struct sl_node *)malloc(sizeof(struct sl_node));
                 if (BOTTOM == NULL)
                 {
                         perror("Out of space.");
@@ -35,7 +33,7 @@ skip_list skip_list_initialize(void)
                 }
                 BOTTOM->right = BOTTOM->down = BOTTOM;
 
-                TAIL = (struct skip_list_node *)malloc(sizeof(struct skip_list_node));
+                TAIL = (struct sl_node *)malloc(sizeof(struct sl_node));
                 if (TAIL == NULL)
                 {
                         perror("Out of space.");
@@ -45,7 +43,7 @@ skip_list skip_list_initialize(void)
                 TAIL->right = TAIL;
         }
 
-        l = (struct skip_list_node *)malloc(sizeof(struct skip_list_node));
+        l = (struct sl_node *)malloc(sizeof(struct sl_node));
         if (l == NULL)
         {
                 perror("Out of space.");
@@ -57,9 +55,9 @@ skip_list skip_list_initialize(void)
         return l;
 }
 
-skip_list_position skip_list_find(int item, skip_list l)
+sl_position sl_find(int item, skip_list l)
 {
-        skip_list_position current = l;
+        sl_position current = l;
         BOTTOM->element = item;
 
         while (item != current->element)
@@ -72,10 +70,10 @@ skip_list_position skip_list_find(int item, skip_list l)
         return current;
 }
 
-skip_list skip_list_insert(int item, skip_list l)
+skip_list sl_insert(int item, skip_list l)
 {
-        skip_list_position current = l;
-        skip_list_position new_node;
+        sl_position current = l;
+        sl_position new_node;
 
         BOTTOM->element = item;
         while (current != BOTTOM)
@@ -85,7 +83,7 @@ skip_list skip_list_insert(int item, skip_list l)
 
                 if (current->element > current->down->right->right->element)
                 {
-                        new_node = (struct skip_list_node *)malloc(sizeof(struct skip_list_node));
+                        new_node = (struct sl_node *)malloc(sizeof(struct sl_node));
                         if (new_node == NULL)
                         {
                                 perror("Out of space.");
@@ -103,7 +101,7 @@ skip_list skip_list_insert(int item, skip_list l)
 
         if (l->right != TAIL)
         {
-                new_node = (struct skip_list_node *)malloc(sizeof(struct skip_list_node));
+                new_node = (struct sl_node *)malloc(sizeof(struct sl_node));
                 if (new_node == NULL)
                 {
                         perror("Out of space.");

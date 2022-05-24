@@ -1,41 +1,38 @@
-#include <stdio.h>
-#include <stdlib.h>
+#ifndef _ST_H
+#define _ST_H
 
-#ifndef _SPLAY_TREE_H
-#define _SPLAY_TREE_H
+struct st_node;
+typedef struct st_node *splay_tree;
+typedef struct st_node *st_position;
 
-struct splay_tree_node;
-typedef struct splay_tree_node *splay_tree;
-typedef struct splay_tree_node *splay_tree_position;
+splay_tree st_make_empty(splay_tree t); // TODO
+splay_tree st_find(splay_tree t);       // TODO
+splay_tree st_find_min(splay_tree t);   // TODO
+splay_tree st_find_max(splay_tree t);   // TODO
+splay_tree st_initialize(void);
+splay_tree st_insert(int x, splay_tree t);
+splay_tree st_remove(int x, splay_tree t);
+int st_retrieve(splay_tree t); // TODO
+splay_tree st_splay(int item, st_position x);
+st_position st_single_rotate_with_left(st_position p);  // TODO
+st_position st_single_rotate_with_right(st_position p); // TODO
+st_position st_double_rotate_with_left(st_position p);  // TODO
+st_position st_double_rotate_with_right(st_position p); // TODO
 
-splay_tree splay_tree_make_empty(splay_tree t); // TODO
-splay_tree splay_tree_find(splay_tree t);       // TODO
-splay_tree splay_tree_find_min(splay_tree t);   // TODO
-splay_tree splay_tree_find_max(splay_tree t);   // TODO
-splay_tree splay_tree_initialize(void);
-splay_tree splay_tree_insert(int x, splay_tree t);
-splay_tree splay_tree_remove(int x, splay_tree t);
-int splay_tree_retrieve(splay_tree t); // TODO
-splay_tree splay_tree_splay(int item, splay_tree_position x);
-splay_tree_position splay_tree_single_rotate_with_left(splay_tree_position p);  // TODO
-splay_tree_position splay_tree_single_rotate_with_right(splay_tree_position p); // TODO
-splay_tree_position splay_tree_double_rotate_with_left(splay_tree_position p);  // TODO
-splay_tree_position splay_tree_double_rotate_with_right(splay_tree_position p); // TODO
-
-struct splay_tree_node
+struct st_node
 {
         int element;
         splay_tree left;
         splay_tree right;
 };
 
-static splay_tree_position NULL_NODE = NULL;
+static st_position NULL_NODE = NULL;
 
-splay_tree splay_tree_initialize(void)
+splay_tree st_initialize(void)
 {
         if (NULL_NODE == NULL)
         {
-                NULL_NODE = (splay_tree)malloc(sizeof(struct splay_tree_node));
+                NULL_NODE = (splay_tree)malloc(sizeof(struct st_node));
                 if (NULL_NODE == NULL)
                 {
                         perror("Out of space.");
@@ -45,10 +42,10 @@ splay_tree splay_tree_initialize(void)
         return NULL_NODE;
 }
 
-splay_tree splay_tree_splay(int item, splay_tree_position x)
+splay_tree st_splay(int item, st_position x)
 {
-        static struct splay_tree_node header;
-        splay_tree_position left_tree_max, right_tree_min;
+        static struct st_node header;
+        st_position left_tree_max, right_tree_min;
 
         header.left = header.right = NULL_NODE;
         left_tree_max = right_tree_min = &header;
@@ -58,7 +55,7 @@ splay_tree splay_tree_splay(int item, splay_tree_position x)
                 if (item < x->element)
                 {
                         if (item < x->left->element)
-                                x = splay_tree_single_rotate_with_left(x);
+                                x = st_single_rotate_with_left(x);
                         if (x->right == NULL_NODE)
                                 break;
                         left_tree_max->right = x;
@@ -74,12 +71,12 @@ splay_tree splay_tree_splay(int item, splay_tree_position x)
         return x;
 }
 
-splay_tree splay_tree_insert(int item, splay_tree t)
+splay_tree st_insert(int item, splay_tree t)
 {
-        static splay_tree_position new_node = NULL;
+        static st_position new_node = NULL;
         if (new_node == NULL)
         {
-                new_node = (splay_tree_position)malloc(sizeof(struct splay_tree_node));
+                new_node = (st_position)malloc(sizeof(struct st_node));
                 if (new_node == NULL)
                 {
                         perror("Out of space.");
@@ -95,7 +92,7 @@ splay_tree splay_tree_insert(int item, splay_tree t)
         }
         else
         {
-                t = splay_tree_splay(item, t);
+                t = st_splay(item, t);
                 if (item < t->element)
                 {
                         new_node->left = t->left;
@@ -118,13 +115,13 @@ splay_tree splay_tree_insert(int item, splay_tree t)
         return t;
 }
 
-splay_tree splay_tree_remove(int item, splay_tree t)
+splay_tree st_remove(int item, splay_tree t)
 {
-        splay_tree_position new_tree;
+        st_position new_tree;
 
         if (t != NULL_NODE)
         {
-                t = splay_tree_splay(item, t);
+                t = st_splay(item, t);
                 if (item == t->element)
                 {
                         if (t->left == NULL_NODE)
@@ -132,7 +129,7 @@ splay_tree splay_tree_remove(int item, splay_tree t)
                         else
                         {
                                 new_tree = t->left;
-                                new_tree = splay_tree_splay(item, new_tree);
+                                new_tree = st_splay(item, new_tree);
                                 new_tree->right = t->right;
                         }
                         free(t);

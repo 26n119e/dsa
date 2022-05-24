@@ -1,46 +1,45 @@
-#include <stdio.h>
-#include <stdlib.h>
+#ifndef _BQ_H
+#define _BQ_H
 
-#ifndef _BINARY_QUEUE_H
-#define _BINARY_QUEQU_H
-#define BINARY_QUEUE_MAX_TREES_SIZE 100
-typedef struct binary_queue_node *binary_queue_bin_tree;
-typedef struct binary_queue_collection *binary_queue;
+#define BQ_MAX_TREES_SIZE 100
 
-binary_queue_bin_tree binary_queue_combine_trees(binary_queue_bin_tree t1, binary_queue_bin_tree t2);
-binary_queue binary_queue_merge(binary_queue h1, binary_queue h2);
-int binary_queue_delete_min(binary_queue h);
-int binary_queue_is_empty(binary_queue h); // TODO
-binary_queue binary_queue_initialize(); // TODO
+typedef struct bq_node *bq_bin_tree;
+typedef struct bq_collection *binary_queue;
 
-struct binary_queue_node
+bq_bin_tree bq_combine_trees(bq_bin_tree t1, bq_bin_tree t2);
+binary_queue bq_merge(binary_queue h1, binary_queue h2);
+int bq_delete_min(binary_queue h);
+int bq_is_empty(binary_queue h); // TODO
+binary_queue bq_initialize(); // TODO
+
+struct bq_node
 {
 
         int element;
-        binary_queue_bin_tree left_child;
-        binary_queue_bin_tree next_sibling;
+        bq_bin_tree left_child;
+        bq_bin_tree next_sibling;
 };
 
-struct binary_queue_collection
+struct bq_collection
 {
         int current_size;
-        binary_queue_bin_tree the_trees[BINARY_QUEUE_MAX_TREES_SIZE];
+        bq_bin_tree the_trees[bq_MAX_TREES_SIZE];
 };
 
-binary_queue_bin_tree binary_queue_combine_trees(binary_queue_bin_tree t1, binary_queue_bin_tree t2)
+bq_bin_tree bq_combine_trees(bq_bin_tree t1, bq_bin_tree t2)
 {
-        if (t1->element > t2->element) return binary_queue_combine_trees(t2, t1);
+        if (t1->element > t2->element) return bq_combine_trees(t2, t1);
         t2->next_sibling = t1->left_child;
         t1->left_child = t2;
         return t1;
 }
 
-binary_queue binary_queue_merge(binary_queue h1, binary_queue h2)
+binary_queue bq_merge(binary_queue h1, binary_queue h2)
 {
-        binary_queue_bin_tree t1, t2, carry = NULL;
+        bq_bin_tree t1, t2, carry = NULL;
         int i, j;
 
-        if (h1->current_size + h2->current_size > BINARY_QUEUE_MAX_TREES_SIZE)
+        if (h1->current_size + h2->current_size > bq_MAX_TREES_SIZE)
         {
                 perror("Merge would exceed capacity.");
                 return NULL;
@@ -61,7 +60,7 @@ binary_queue binary_queue_merge(binary_queue h1, binary_queue h2)
                                 h2->the_trees[i] = NULL;
                                 break;
                         case 3:
-                                carry = binary_queue_combine_trees(t1, t2);
+                                carry = bq_combine_trees(t1, t2);
                                 h1->the_trees[i] = h2->the_trees[i] = NULL;
                                 break;
                         case 4:
@@ -69,16 +68,16 @@ binary_queue binary_queue_merge(binary_queue h1, binary_queue h2)
                                 carry = NULL;
                                 break;
                         case 5:
-                                carry = binary_queue_combine_trees(t1, carry);
+                                carry = bq_combine_trees(t1, carry);
                                 h1->the_trees[i] = NULL;
                                 break;
                         case 6:
-                                carry = binary_queue_combine_trees(t2, carry);
+                                carry = bq_combine_trees(t2, carry);
                                 h2->the_trees[i] = NULL;
                                 break;
                         case 7:
                                 h1->the_trees[i] = carry;
-                                carry = binary_queue_combine_trees(t1, t2);
+                                carry = bq_combine_trees(t1, t2);
                                 h2->the_trees[i] = NULL;
                                 break;
                 }
@@ -86,19 +85,19 @@ binary_queue binary_queue_merge(binary_queue h1, binary_queue h2)
         return h1;
 }
 
-int binary_queue_delete_min(binary_queue h)
+int bq_delete_min(binary_queue h)
 {
         int i, j, min_tree, min_item;
         binary_queue deleted_queue;
-        binary_queue_bin_tree deleted_tree, old_root;
+        bq_bin_tree deleted_tree, old_root;
 
-        if (binary_queue_is_empty(h))
+        if (bq_is_empty(h))
         {
                 perror("Empty binomial queue.");
                 return -1;
         }
 
-        for (i = 0; i < BINARY_QUEUE_MAX_TREES_SIZE; i++)
+        for (i = 0; i < bq_MAX_TREES_SIZE; i++)
         {
                 if (h->the_trees[i] && h->the_trees[i]->element < min_item)
                 {
@@ -112,7 +111,7 @@ int binary_queue_delete_min(binary_queue h)
         deleted_tree = deleted_tree->left_child;
         free(old_root);
 
-        deleted_queue = binary_queue_initialize();
+        deleted_queue = bq_initialize();
         deleted_queue->current_size = (1 << min_tree) - 1;
         for (j = min_tree - 1; j >= 0; j--)
         {
@@ -123,7 +122,7 @@ int binary_queue_delete_min(binary_queue h)
         
         h->the_trees[min_tree] = NULL;
         h->current_size -= deleted_queue->current_size + 1;
-        binary_queue_merge(h, deleted_queue);
+        bq_merge(h, deleted_queue);
         return min_item;
 }
 

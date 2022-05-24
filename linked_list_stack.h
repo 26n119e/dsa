@@ -1,61 +1,58 @@
-#include <stdio.h>
-#include <stdlib.h>
+#ifndef _LLS_H
+#define _LLS_H
 
-#ifndef _LINKED_LIST_STACK_H
-#define _LINKED_LIST_STACK_H
+struct lls_node;
+typedef struct lls_node *p_lls_node;
+typedef p_lls_node linked_list_stack;
 
-struct linked_list_stack_node;
-typedef struct linked_list_stack_node *p_linked_list_stack_node;
-typedef p_linked_list_stack_node linked_list_stack;
+int lls_is_empty(linked_list_stack s);
+linked_list_stack lls_create(void);
+void lls_dispose(linked_list_stack s); // TODO
+void lls_make_empty(linked_list_stack s);
+void lls_push(int x, linked_list_stack s);
+int lls_top(linked_list_stack s); // TODO
+void lls_pop(linked_list_stack s);
 
-int linked_list_stack_is_empty(linked_list_stack s);
-linked_list_stack linked_list_stack_create(void);
-void linked_list_stack_dispose(linked_list_stack s); // TODO
-void linked_list_stack_make_empty(linked_list_stack s);
-void linked_list_stack_push(int x, linked_list_stack s);
-int linked_list_stack_top(linked_list_stack s); // TODO
-void linked_list_stack_pop(linked_list_stack s);
-
-struct linked_list_stack_node
+struct lls_node
 {
         int element;
-        p_linked_list_stack_node next;
+        p_lls_node next;
 };
 
-int linked_list_stack_is_empty(linked_list_stack s)
+int lls_is_empty(linked_list_stack s)
 {
         return s->next == NULL;
 }
 
-void linked_list_stack_make_empty(linked_list_stack s)
+void lls_make_empty(linked_list_stack s)
 {
         if (s == NULL)
         {
-                perror("Must use linked_list_stack_create first.");
+                perror("Must use lls_create first.");
                 return;
         }
         else
-                while (!linked_list_stack_is_empty(s))
-                        linked_list_stack_pop(s);
+                while (!lls_is_empty(s))
+                        lls_pop(s);
 }
 
-linked_list_stack linked_list_stack_create(void)
+linked_list_stack lls_create(void)
 {
-        linked_list_stack s = (linked_list_stack)malloc(sizeof(struct linked_list_stack_node));
+        linked_list_stack s = (linked_list_stack)malloc(sizeof(struct lls_node));
         if (s == NULL)
         {
                 perror("Out of space.");
                 return NULL;
         }
         s->next = NULL;
-        linked_list_stack_make_empty(s);
+        lls_make_empty(s);
         return s;
 }
 
-void linked_list_stack_push(int x, linked_list_stack s)
+void lls_push(int x, linked_list_stack s)
 {
-        p_linked_list_stack_node tmp_cell;
-        tmp_cell = (p_linked_list_stack_node)malloc(sizeof(struct linked_list_stack_node));
+        p_lls_node tmp_cell;
+        tmp_cell = (p_lls_node)malloc(sizeof(struct lls_node));
         if (tmp_cell == NULL)
         {
                 perror("Out of space.");
@@ -69,10 +66,10 @@ void linked_list_stack_push(int x, linked_list_stack s)
         }
 }
 
-void linked_list_stack_pop(linked_list_stack s)
+void lls_pop(linked_list_stack s)
 {
-        p_linked_list_stack_node first_cell;
-        if (linked_list_stack_is_empty(s))
+        p_lls_node first_cell;
+        if (lls_is_empty(s))
         {
                 perror("Empty stack.");
                 return;

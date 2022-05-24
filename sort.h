@@ -1,22 +1,23 @@
-#include <stdio.h>
-#include <stdlib.h>
-
 #ifndef _SORT_H
 #define _SORT_H
 
 /* Insertion_sort. */
 void insertion_sort(int array[], int n);
+
 /* Shell_sort. */
 void shell_sort(int array[], int n);
+
 /* Heap sort. */
 #define left_child(i) (2 * (i) + i)
 void perc_down(int array[], int i, int n);
 void heap_sort(int array[], int n);
 void swap(int *a, int *b);      // TODO
+
 /* Merge sort. */
 void m_sort(int array[], int tmp_array[], int left, int right);
 void merge_sort(int array[], int n);
 void merge(int array[], int temp_array[], int l_pos, int r_pos, int right_end);
+
 /* Quick sort. */
 #define cutoff 3
 void quick_sort(int array[], int n);

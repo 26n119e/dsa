@@ -1,29 +1,26 @@
-#include <stdio.h>
-#include <stdlib.h>
-
 #ifndef _TREE_H
 #define _TREE_H
 
 struct tree_node;
 typedef struct tree_node *tree_position;
-typedef struct tree_node *tree_search_tree;
+typedef struct tree_node *search_tree;
 
-tree_search_tree tree_make_empty(tree_search_tree t);
-tree_position tree_find(int x, tree_search_tree t);
-tree_position tree_find_min(tree_search_tree t);
-tree_position tree_find_max(tree_search_tree t);
-tree_search_tree tree_insert(int x, tree_search_tree t);
-tree_search_tree tree_delete(int x, tree_search_tree t);
+search_tree tree_make_empty(search_tree t);
+tree_position tree_find(int x, search_tree t);
+tree_position tree_find_min(search_tree t);
+tree_position tree_find_max(search_tree t);
+search_tree tree_insert(int x, search_tree t);
+search_tree tree_delete(int x, search_tree t);
 int tree_retrieve(tree_position p); // TODO
 
 struct tree_node
 {
         int element;
-        tree_search_tree left;
-        tree_search_tree right;
+        search_tree left;
+        search_tree right;
 };
 
-tree_search_tree make_empty_tree(tree_search_tree t)
+search_tree tree_make_empty(search_tree t)
 {
         if (t != NULL)
         {
@@ -34,7 +31,7 @@ tree_search_tree make_empty_tree(tree_search_tree t)
         return NULL;
 }
 
-tree_position tree_find(int x, tree_search_tree t)
+tree_position tree_find(int x, search_tree t)
 {
         if (t == NULL)
                 return NULL;
@@ -46,7 +43,7 @@ tree_position tree_find(int x, tree_search_tree t)
                 return t;
 }
 
-tree_position tree_find_min(tree_search_tree t)
+tree_position tree_find_min(search_tree t)
 {
         if (t == NULL)
                 return NULL;
@@ -56,7 +53,7 @@ tree_position tree_find_min(tree_search_tree t)
                 return tree_find_min(t->left);
 }
 
-tree_position tree_find_max(tree_search_tree t)
+tree_position tree_find_max(search_tree t)
 {
         if (t != NULL)
         {
@@ -66,7 +63,7 @@ tree_position tree_find_max(tree_search_tree t)
         return t;
 }
 
-tree_search_tree tree_insert(int x, tree_search_tree t)
+search_tree tree_insert(int x, search_tree t)
 {
         if (t == NULL)
         {
@@ -90,7 +87,7 @@ tree_search_tree tree_insert(int x, tree_search_tree t)
         return t;
 }
 
-tree_search_tree tree_delete(int x, tree_search_tree t)
+search_tree tree_delete(int x, search_tree t)
 {
         tree_position tmp_cell;
 

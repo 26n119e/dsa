@@ -1,33 +1,31 @@
-#include <stdio.h>
-#include <stdlib.h>
+#ifndef _RBT_H
+#define _RBT_H
 
-#ifndef _RED_BLACK_TREE_H
-#define _RED_BLACK_TREE_H
 typedef enum color_type
 {
         red,
         black
 } color_type;
 
-struct red_black_tree_node;
-typedef struct red_black_tree_node *red_black_tree;
-typedef struct red_black_tree_node *red_black_tree_position;
-red_black_tree_position NULL_NODE = NULL;
+struct rbt_node;
+typedef struct rbt_node *red_black_tree;
+typedef struct rbt_node *rbt_position;
+rbt_position NULL_NODE = NULL;
 
-red_black_tree red_black_tree_initialization(void);
-static red_black_tree_position red_black_tree_rotate(int item, red_black_tree_position parent);
-red_black_tree_position red_black_tree_single_rotate_with_left(red_black_tree_position p);  // TODO
-red_black_tree_position red_black_tree_single_rotate_with_right(red_black_tree_position p); // TODO
+red_black_tree rbt_initialization(void);
+static rbt_position rbt_rotate(int item, rbt_position parent);
+rbt_position rbt_single_rotate_with_left(rbt_position p);  // TODO
+rbt_position rbt_single_rotate_with_right(rbt_position p); // TODO
 /* x: current node
 ** p: parent node
 ** gp: grandparent node
 ** ggp: grandgrandparent node ?
 */
-static red_black_tree_position x, p, gp, ggp;
-static void red_black_tree_handler_reorient(int item, red_black_tree t);
-red_black_tree red_black_tree_insert(int item, red_black_tree t);
+static rbt_position x, p, gp, ggp;
+static void rbt_handler_reorient(int item, red_black_tree t);
+red_black_tree rbt_insert(int item, red_black_tree t);
 
-struct red_black_tree_node
+struct rbt_node
 {
         int element;
         red_black_tree left;
@@ -35,12 +33,12 @@ struct red_black_tree_node
         color_type color;
 };
 
-red_black_tree red_black_tree_initialization(void)
+red_black_tree rbt_initialization(void)
 {
         red_black_tree t;
         if (NULL_NODE == NULL)
         {
-                NULL_NODE = (struct red_black_tree_node *)malloc(sizeof(struct red_black_tree_node));
+                NULL_NODE = (struct rbt_node *)malloc(sizeof(struct rbt_node));
                 if (NULL_NODE == NULL)
                 {
                         perror("Out of space.");
@@ -51,7 +49,7 @@ red_black_tree red_black_tree_initialization(void)
                 NULL_NODE->element = 0; // Infinity;
         }
 
-        t = (struct red_black_tree_node *)malloc(sizeof(struct red_black_tree_node));
+        t = (struct rbt_node *)malloc(sizeof(struct rbt_node));
         if (t == NULL)
         {
                 perror("Out of space.");
@@ -63,15 +61,15 @@ red_black_tree red_black_tree_initialization(void)
         return t;
 }
 
-static red_black_tree_position red_black_tree_rotate(int item, red_black_tree_position parent)
+static rbt_position rbt_rotate(int item, rbt_position parent)
 {
         if (item < parent->element)
-                return parent->left = item < parent->left->element ? red_black_tree_single_rotate_with_left(parent->left) : red_black_tree_single_rotate_with_right(parent->left);
+                return parent->left = item < parent->left->element ? rbt_single_rotate_with_left(parent->left) : rbt_single_rotate_with_right(parent->left);
         else
-                return parent->right = item < parent->right->element ? red_black_tree_single_rotate_with_left(parent->right) : red_black_tree_single_rotate_with_right(parent->right);
+                return parent->right = item < parent->right->element ? rbt_single_rotate_with_left(parent->right) : rbt_single_rotate_with_right(parent->right);
 }
 
-static void red_black_tree_handler_reorient(int item, red_black_tree t)
+static void rbt_handler_reorient(int item, red_black_tree t)
 {
         x->color = red;
         x->left->color = black;
@@ -81,14 +79,14 @@ static void red_black_tree_handler_reorient(int item, red_black_tree t)
         {
                 gp->color = red;
                 if (item < gp->element != (item < p->element))
-                        p = red_black_tree_rotate(item, gp);
-                x = red_black_tree_rotate(item, ggp);
+                        p = rbt_rotate(item, gp);
+                x = rbt_rotate(item, ggp);
                 x->color = black;
         }
         t->right->color = black;
 }
 
-red_black_tree red_black_tree_insert(int item, red_black_tree t)
+red_black_tree rbt_insert(int item, red_black_tree t)
 {
         x = p = gp = t;
         NULL_NODE->element = item;
@@ -103,12 +101,12 @@ red_black_tree red_black_tree_insert(int item, red_black_tree t)
                         x = x->right;
                 if (x->left->color == red && x->right->color == red)
                         ;
-                red_black_tree_handler_reorient(item, t);
+                rbt_handler_reorient(item, t);
         }
 
         if (x != NULL_NODE)
                 return NULL_NODE;
-        x = (struct red_black_tree_node *)malloc(sizeof(struct red_black_tree_node));
+        x = (struct rbt_node *)malloc(sizeof(struct rbt_node));
         if (x == NULL)
         {
                 perror("Out of space.");
@@ -122,7 +120,7 @@ red_black_tree red_black_tree_insert(int item, red_black_tree t)
         else
                 p->right = x;
 
-        red_black_tree_handler_reorient(item, t);
+        rbt_handler_reorient(item, t);
 
         return t;
 }

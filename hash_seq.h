@@ -1,58 +1,55 @@
-#include <stdio.h>
-#include <stdlib.h>
+#ifndef _HS_H
+#define _HS_H
 
-#ifndef _HASH_SEQ_H
-#define _HASH_SEQ_H
+#define HS_MIN_TABLE_SIZE 10000
 
-#define HASH_SEQ_MIN_TABLE_SIZE 10000
+struct hs_list_node;
+typedef struct hs_list_node *hs_position;
+struct hs_table;
+typedef struct hs_table *p_hs_table;
 
-struct hash_seq_list_node;
-typedef struct hash_seq_list_node *hash_seq_position;
-struct hash_seq_table;
-typedef struct hash_seq_table *p_hash_seq_table;
+p_hs_table hs_initialize(int table_size);
+void hs_destroy_(p_hs_table h); // TODO
+hs_position hs_find(int key, p_hs_table h);
+void hs_insert(int key, p_hs_table h);
+int hs_retrieve(hs_position p); // TODO
+int hs_next_prime(int x);             // TODO
+int hs_hash(int key, int table_size); // TODO
 
-p_hash_seq_table hash_seq_initialize(int table_size);
-void hash_seq_destroy_(p_hash_seq_table h); // TODO
-hash_seq_position hash_seq_find(int key, p_hash_seq_table h);
-void hash_seq_insert(int key, p_hash_seq_table h);
-int hash_seq_retrieve(hash_seq_position p); // TODO
-int hash_seq_next_prime(int x);             // TODO
-int hash_seq_hash(int key, int table_size); // TODO
-
-struct hash_seq_list_node
+struct hs_list_node
 {
         int element;
-        hash_seq_position next;
+        hs_position next;
 };
 
-typedef hash_seq_position hash_seq_list;
+typedef hs_position hs_list;
 
-struct hash_seq_table
+struct hs_table
 {
         int table_size;
-        hash_seq_list *the_lists;
+        hs_list *the_lists;
 };
 
-p_hash_seq_table hash_seq_initialize(int table_size)
+p_hs_table hs_initialize(int table_size)
 {
-        p_hash_seq_table h;
+        p_hs_table h;
         int i;
 
-        if (table_size < HASH_SEQ_MIN_TABLE_SIZE)
+        if (table_size < hs_MIN_TABLE_SIZE)
         {
                 perror("Table size too small.");
                 return NULL;
         }
 
-        h = (p_hash_seq_table)malloc(sizeof(struct hash_seq_table));
+        h = (p_hs_table)malloc(sizeof(struct hs_table));
         if (h == NULL)
         {
                 perror("Out of space.");
                 return NULL;
         }
 
-        h->table_size = hash_seq_next_prime(table_size);
-        h->the_lists = (hash_seq_list *)malloc(sizeof(hash_seq_list));
+        h->table_size = hs_next_prime(table_size);
+        h->the_lists = (hs_list *)malloc(sizeof(hs_list));
         if (h->the_lists == NULL)
         {
                 perror("Out of space.");
@@ -62,7 +59,7 @@ p_hash_seq_table hash_seq_initialize(int table_size)
 
         for (i = 0; i < h->table_size; i++)
         {
-                h->the_lists[i] = (struct hash_seq_list_node *)malloc(sizeof(struct hash_seq_list_node));
+                h->the_lists[i] = (struct hs_list_node *)malloc(sizeof(struct hs_list_node));
                 if (h->the_lists[i] == NULL)
                 {
                         perror("Out of space.");
@@ -77,12 +74,12 @@ p_hash_seq_table hash_seq_initialize(int table_size)
         return h;
 }
 
-hash_seq_position hash_seq_find(int key, p_hash_seq_table h)
+hs_position hs_find(int key, p_hs_table h)
 {
-        hash_seq_position p;
-        hash_seq_list l;
+        hs_position p;
+        hs_list l;
 
-        l = h->the_lists[hash_seq_hash(key, h->table_size)];
+        l = h->the_lists[hs_hash(key, h->table_size)];
         p = l->next;
 
         while (p != NULL && p->element != key)
@@ -91,14 +88,14 @@ hash_seq_position hash_seq_find(int key, p_hash_seq_table h)
         return p;
 }
 
-void hash_seq_insert(int key, p_hash_seq_table h)
+void hs_insert(int key, p_hs_table h)
 {
-        hash_seq_position pos, new_cell;
-        hash_seq_list l;
-        pos = hash_seq_find(key, h);
+        hs_position pos, new_cell;
+        hs_list l;
+        pos = hs_find(key, h);
         if (pos == NULL)
         {
-                new_cell = (struct hash_seq_list_node *)malloc(sizeof(struct hash_seq_list_node));
+                new_cell = (struct hs_list_node *)malloc(sizeof(struct hs_list_node));
                 if (new_cell == NULL)
                 {
                         perror("Out of space.");
@@ -106,7 +103,7 @@ void hash_seq_insert(int key, p_hash_seq_table h)
                 }
                 else
                 {
-                        l = h->the_lists[hash_seq_hash(key, h->table_size)];
+                        l = h->the_lists[hs_hash(key, h->table_size)];
                         new_cell->next = l->next;
                         new_cell->element = key;
                         l->next = new_cell;
