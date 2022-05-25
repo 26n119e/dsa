@@ -70,7 +70,7 @@ search_tree tree_insert(int x, search_tree t)
                 t = (struct tree_node *)malloc(sizeof(struct tree_node));
                 if (t == NULL)
                 {
-                        perror("out of space.");
+                        perror("Out of space.");
                         return NULL;
                 }
                 else
